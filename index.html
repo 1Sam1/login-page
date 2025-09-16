@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Login Page</title>
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Firebase App (the core SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7vBbrIPWfofr29hokZbctW6JJ06Lc92M",
+            authDomain: "login-webapp-shri.firebaseapp.com",
+            projectId: "login-webapp-shri",
+            storageBucket: "login-webapp-shri.firebasestorage.app",
+            messagingSenderId: "201621708396",
+            appId: "1:201621708396:web:6edb2ecb04740d81bc0249"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
+    </script>
 </head>
 <body>
     <div class="login-container">
@@ -14,7 +36,26 @@
             <input type="password" name="password" placeholder="Password" required />
             <button type="submit">Login</button>
         </form>
+        <hr>
+        <button id="googleLogin">Login with Google</button>
     </div>
+
+    <script>
+        const googleLoginButton = document.getElementById('googleLogin');
+
+        googleLoginButton.addEventListener('click', () => {
+            const provider = new firebase.GoogleAuthProvider();
+
+            firebase.signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    alert("Hello, " + user.displayName);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("Error: " + error.message);
+                });
+        });
+    </script>
 </body>
-  </html>
-  
+</html>
