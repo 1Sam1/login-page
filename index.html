@@ -3,13 +3,56 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Test Login Page</title>
+    <title>Login Page</title>
 
     <!-- Firebase App -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
 
     <!-- Firebase Authentication -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+        input {
+            width: 90%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 95%;
+            padding: 10px;
+            border: none;
+            background: #4285F4;
+            color: white;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #357ae8;
+        }
+        .message {
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
 
     <script>
         const firebaseConfig = {
@@ -23,20 +66,20 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-
-        window.onload = () => {
-            console.log("Firebase initialized");
-        }
     </script>
 </head>
 <body>
-    <h1>Test Firebase Login Page</h1>
-    <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" placeholder="Password" required />
-        <button type="submit">Login / Register</button>
-    </form>
-    <div id="message"></div>
+    <div class="login-container">
+        <h2>Login</h2>
+
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Password" required />
+            <button type="submit">Login / Register</button>
+        </form>
+
+        <div class="message" id="message"></div>
+    </div>
 
     <script>
         const loginForm = document.getElementById('loginForm');
@@ -44,20 +87,35 @@
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            console.log("Form submitted");
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            console.log("Email:", email, "Password:", password);
+
+            messageDiv.style.color = "black";
+            messageDiv.textContent = "Processing...";
 
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    messageDiv.textContent = "Logged in: " + userCredential.user.email;
-                    console.log("Logged in:", userCredential.user.email);
+                    const user = userCredential.user;
+                    messageDiv.style.color = "green";
+                    messageDiv.textContent = "Welcome back, " + user.email;
                 })
                 .catch((error) => {
-                    console.log("Sign in error:", error.message);
-                    messageDiv.textContent = "Sign in error: " + error.message;
+                    if (error.code === 'auth/user-not-found') {
+                        auth.createUserWithEmailAndPassword(email, password)
+                            .then((userCredential) => {
+                                const user = userCredential.user;
+                                messageDiv.style.color = "green";
+                                messageDiv.textContent = "Account created! Welcome, " + user.email;
+                            })
+                            .catch((error) => {
+                                messageDiv.style.color = "red";
+                                messageDiv.textContent = "Error: " + error.message;
+                            });
+                    } else {
+                        messageDiv.style.color = "red";
+                        messageDiv.textContent = "Error: " + error.message;
+                    }
                 });
         });
     </script>
