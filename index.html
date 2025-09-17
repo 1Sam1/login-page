@@ -94,6 +94,7 @@
             messageDiv.style.color = "black";
             messageDiv.textContent = "Processing...";
 
+            // Try to sign in first
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
@@ -101,21 +102,18 @@
                     messageDiv.textContent = "Welcome back, " + user.email;
                 })
                 .catch((error) => {
-                    if (error.code === 'auth/user-not-found') {
-                        auth.createUserWithEmailAndPassword(email, password)
-                            .then((userCredential) => {
-                                const user = userCredential.user;
-                                messageDiv.style.color = "green";
-                                messageDiv.textContent = "Account created! Welcome, " + user.email;
-                            })
-                            .catch((error) => {
-                                messageDiv.style.color = "red";
-                                messageDiv.textContent = "Error: " + error.message;
-                            });
-                    } else {
-                        messageDiv.style.color = "red";
-                        messageDiv.textContent = "Error: " + error.message;
-                    }
+                    console.log("Sign in failed:", error.message);
+                    // If sign-in fails, try to create the user anyway
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .then((userCredential) => {
+                            const user = userCredential.user;
+                            messageDiv.style.color = "green";
+                            messageDiv.textContent = "Account created! Welcome, " + user.email;
+                        })
+                        .catch((error) => {
+                            messageDiv.style.color = "red";
+                            messageDiv.textContent = "Error: " + error.message;
+                        });
                 });
         });
     </script>
