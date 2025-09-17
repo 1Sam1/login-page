@@ -127,10 +127,15 @@
         });
 
         function showLoggedIn(email) {
+            console.log("Login successful for:", email);
             messageDiv.style.color = "green";
             messageDiv.textContent = "Welcome, " + email;
-            loginForm.style.display = "none";
-            logoutButton.style.display = "block";
+
+            // Redirect after 2 seconds to ensure user sees the message
+            setTimeout(() => {
+                console.log("Redirecting now...");
+                window.location.href = "https://1sam1.github.io/Shri-website-/";
+            }, 2000);
         }
     </script>
 </body>
