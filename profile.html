@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHRI - My Account</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .profile-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    .profile-box {
+      background: #fff3e0;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .profile-box h2 {
+      color: #FF512F;
+      margin-bottom: 20px;
+    }
+
+    .profile-box p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .logout-btn {
+      padding: 12px 25px;
+      background: linear-gradient(to right, #FF512F, #F09819);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .logout-btn:hover {
+      background: #FF7043;
+    }
+  </style>
+</head>
+<body>
+  <section class="profile-container">
+    <div class="profile-box">
+      <h2>My Account</h2>
+      <p><strong>Name:</strong> <span id="userName"></span></p>
+      <p><strong>Email:</strong> <span id="userEmail"></span></p>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+  </section>
+
+  <script type="module">
+    import { auth } from "./js/firebase-config.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+    const userNameEl = document.getElementById("userName");
+    const userEmailEl = document.getElementById("userEmail");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // Show user info or redirect to login if not logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userNameEl.innerText = user.displayName || "No Name";
+        userEmailEl.innerText = user.email;
+      } else {
+        // Not logged in, redirect to login page
+        window.location.href = "login.html";
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth)
+        .then(() => {
+          window.location.href = "login.html";
+        })
+        .catch((error) => {
+          alert("Error logging out: " + error.message);
+        });
+    });
+  </script>
+</body>
+</html>
